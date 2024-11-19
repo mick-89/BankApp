@@ -16,7 +16,7 @@ public class User {
     private String firstname;
     private String lastname;
     private int age;
-    private ArrayList<Account> accounts;
+    private ArrayList<Account> accounts; // principio D
 
     public User(int id, String firstname, String lastname, int age) {
         this.id = id;

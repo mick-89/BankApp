@@ -8,7 +8,8 @@ package bank;
  *
  * @author edangulo
  */
-public enum TransactionType {
+
+public enum TransactionType { // obviamente aquí será Open/closed
     DEPOSIT,
     WITHDRAW,
     TRANSFER

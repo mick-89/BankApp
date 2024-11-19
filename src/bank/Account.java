@@ -11,7 +11,7 @@ package bank;
 public class Account {
     
     private String id;
-    private User owner;
+    private User owner; // creo que también principio D?
     private double balance;
 
     public Account(String id, User owner) {
@@ -42,11 +42,13 @@ public class Account {
         return balance;
     }
     
+    
+    // no sé si estos rompan el Single responsibility
     public void deposit(double amount) {
         this.balance += amount;
     }
     
-    public boolean withdraw(double amount) {
+    public boolean withdraw(double amount) { 
         if (amount > this.balance) {
             return false;
         }

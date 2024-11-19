@@ -8,6 +8,8 @@ package bank;
  *
  * @author edangulo
  */
+
+// creo que esta clase era lo que decía el man de que le falta la lógica y que está dentro de la interfaz
 public class Transaction {
     
     private TransactionType type;
