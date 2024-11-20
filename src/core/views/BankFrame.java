@@ -569,118 +569,132 @@ public class BankFrame extends javax.swing.JFrame {
 
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
         // TODO add your handling code here:
-        try {
-            int userId = Integer.parseInt(userIDTextField.getText());
-            double initialBalance = Double.parseDouble(initialBalanceTextField.getText());
-            
-            User selectedUser = null;
-            for (User user : this.users) {
-                if (user.getId() == userId && selectedUser == null) {
-                    selectedUser = user;
-                }
+
+        String userId = userIDTextField.getText();
+        String initialBalance = initialBalanceTextField.getText();
+
+        User selectedUser = null;
+        
+        Response response = AccountController.createAccount(userId, initialBalance);
+        
+        /*for (User user : this.users) { 
+            // creo que esto no se debería hacer aquí pero no sé porque no presté atención
+            if (user.getId() == userId && selectedUser == null) {
+                selectedUser = user;
             }
-            
-            if (selectedUser != null) {
-                Random random = new Random();
-                int first = random.nextInt(1000);
-                int second = random.nextInt(1000000);
-                int third = random.nextInt(100);
-                
-                String accountId = String.format("%03d", first) + "-" + String.format("%06d", second) + "-" + String.format("%02d", third);
-                
-                this.accounts.add(new Account(accountId, selectedUser, initialBalance));
-                
-                userIDTextField.setText("");
-                initialBalanceTextField.setText("");
-            }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error", "Error", JOptionPane.ERROR_MESSAGE);
         }
+
+        if (selectedUser != null) {
+            Random random = new Random();
+            int first = random.nextInt(1000);
+            int second = random.nextInt(1000000);
+            int third = random.nextInt(100);
+
+            String accountId = String.format("%03d", first) + "-" + String.format("%06d", second) + "-" + String.format("%02d", third);
+
+            this.accounts.add(new Account(accountId, selectedUser, initialBalance));
+
+        }*/
+        
+        
+        if (response.getStatus() >= 500) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+        } else if (response.getStatus() >= 400) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+        }else {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
+            
+            userIDTextField.setText("");
+            initialBalanceTextField.setText("");
+        }
+        
     }//GEN-LAST:event_createButtonActionPerformed
 
     private void executeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_executeButtonActionPerformed
         // TODO add your handling code here:
-        try {
-            String type = typeComboBox.getItemAt(typeComboBox.getSelectedIndex());
-            switch (type) {
-                case "Deposit": {
-                    String destinationAccountId = destinationAccountTextField.getText();
-                    double amount = Double.parseDouble(amountTextField.getText());
-                    
-                    Account destinationAccount = null;
-                    for (Account account : this.accounts) {
-                        if (account.getId().equals(destinationAccountId)) {
-                            destinationAccount = account;
-                        }
+        
+        String type = typeComboBox.getItemAt(typeComboBox.getSelectedIndex());
+        String sourceAccountId = sourceAccountTextField.getText();
+        String destinationAccountId = destinationAccountTextField.getText();
+        String amount = amountTextField.getText();
+        
+        
+        /*switch (type) { // sí nada de esto va acá
+            case "Deposit": {
+                String destinationAccountId = destinationAccountTextField.getText();
+                double amount = Double.parseDouble(amountTextField.getText());
+
+                Account destinationAccount = null;
+                for (Account account : this.accounts) {
+                    if (account.getId().equals(destinationAccountId)) {
+                        destinationAccount = account;
                     }
-                    if (destinationAccount != null) {
-                        destinationAccount.deposit(amount);
-                        
-                        this.transactions.add(new Transaction(TransactionType.DEPOSIT, null, destinationAccount, amount));
-                        
-                        sourceAccountTextField.setText("");
-                        destinationAccountTextField.setText("");
-                        amountTextField.setText("");
-                    }
-                    break;
                 }
-                case "Withdraw": {
-                    String sourceAccountId = sourceAccountTextField.getText();
-                    double amount = Double.parseDouble(amountTextField.getText());
-                    
-                    Account sourceAccount = null;
-                    for (Account account : this.accounts) {
-                        if (account.getId().equals(sourceAccountId)) {
-                            sourceAccount = account;
-                        }
-                    }
-                    if (sourceAccount != null && sourceAccount.withdraw(amount)) {
-                        this.transactions.add(new Transaction(TransactionType.WITHDRAW, sourceAccount, null, amount));
-                        
-                        sourceAccountTextField.setText("");
-                        destinationAccountTextField.setText("");
-                        amountTextField.setText("");
-                    }
-                    break;
-                }
-                case "Transfer": {
-                    String sourceAccountId = sourceAccountTextField.getText();
-                    String destinationAccountId = destinationAccountTextField.getText();
-                    double amount = Double.parseDouble(amountTextField.getText());
-                    
-                    Account sourceAccount = null;
-                    Account destinationAccount = null;
-                    for (Account account : this.accounts) {
-                        if (account.getId().equals(sourceAccountId)) {
-                            sourceAccount = account;
-                        }
-                    }
-                    for (Account account : this.accounts) {
-                        if (account.getId().equals(destinationAccountId)) {
-                            destinationAccount = account;
-                        }
-                    }
-                    if (sourceAccount != null && destinationAccount != null && sourceAccount.withdraw(amount)) {
-                        destinationAccount.deposit(amount);
-                        
-                        this.transactions.add(new Transaction(TransactionType.TRANSFER, sourceAccount, destinationAccount, amount));
-                        
-                        sourceAccountTextField.setText("");
-                        destinationAccountTextField.setText("");
-                        amountTextField.setText("");
-                    }
-                    break;
-                }
-                default: {
+                if (destinationAccount != null) {
+                    destinationAccount.deposit(amount);
+
+                    this.transactions.add(new Transaction(TransactionType.DEPOSIT, null, destinationAccount, amount));
+
                     sourceAccountTextField.setText("");
                     destinationAccountTextField.setText("");
                     amountTextField.setText("");
-                    break;
                 }
+                break;
             }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error", "Error", JOptionPane.ERROR_MESSAGE);
-        }
+            case "Withdraw": {
+                String sourceAccountId = sourceAccountTextField.getText();
+                double amount = Double.parseDouble(amountTextField.getText());
+
+                Account sourceAccount = null;
+                for (Account account : this.accounts) {
+                    if (account.getId().equals(sourceAccountId)) {
+                        sourceAccount = account;
+                    }
+                }
+                if (sourceAccount != null && sourceAccount.withdraw(amount)) {
+                    this.transactions.add(new Transaction(TransactionType.WITHDRAW, sourceAccount, null, amount));
+
+                    sourceAccountTextField.setText("");
+                    destinationAccountTextField.setText("");
+                    amountTextField.setText("");
+                }
+                break;
+            }
+            case "Transfer": {
+                String sourceAccountId = sourceAccountTextField.getText();
+                String destinationAccountId = destinationAccountTextField.getText();
+                double amount = Double.parseDouble(amountTextField.getText());
+
+                Account sourceAccount = null;
+                Account destinationAccount = null;
+                for (Account account : this.accounts) {
+                    if (account.getId().equals(sourceAccountId)) {
+                        sourceAccount = account;
+                    }
+                }
+                for (Account account : this.accounts) {
+                    if (account.getId().equals(destinationAccountId)) {
+                        destinationAccount = account;
+                    }
+                }
+                if (sourceAccount != null && destinationAccount != null && sourceAccount.withdraw(amount)) {
+                    destinationAccount.deposit(amount);
+
+                    this.transactions.add(new Transaction(TransactionType.TRANSFER, sourceAccount, destinationAccount, amount));
+
+                    sourceAccountTextField.setText("");
+                    destinationAccountTextField.setText("");
+                    amountTextField.setText("");
+                }
+                break;
+            }
+            default: {
+                sourceAccountTextField.setText("");
+                destinationAccountTextField.setText("");
+                amountTextField.setText("");
+                break;
+            }
+        }*/
     }//GEN-LAST:event_executeButtonActionPerformed
 
     private void refreshUsersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshUsersButtonActionPerformed
@@ -688,6 +702,8 @@ public class BankFrame extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);
         
+        // En los requisitos de controlador decía lo del orden así que supongo 
+        // que esta parte iría por allá?
         this.users.sort((obj1, obj2) -> (obj1.getId() - obj2.getId()));
         
         for (User user : this.users) {
@@ -732,40 +748,7 @@ public class BankFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_typeComboBoxActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(BankFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(BankFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(BankFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(BankFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new BankFrame().setVisible(true);
-            }
-        });
-    }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField IDTextField;
