@@ -4,6 +4,8 @@
  */
 package core.views;
 
+import core.controllers.UserController;
+import core.controllers.utils.Response;
 import core.models.Account;
 import core.models.Transaction;
 import core.models.TransactionType;
@@ -19,10 +21,11 @@ import javax.swing.table.DefaultTableModel;
  * @author edangulo
  */
 public class BankFrame extends javax.swing.JFrame {
-    
+     
     private ArrayList<Account> accounts;
     private ArrayList<Transaction> transactions;
     private ArrayList<User> users;
+    
     
     /**
      * Creates new form BankFrame
@@ -534,22 +537,29 @@ public class BankFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerButtonActionPerformed
-        // TODO add your handling code here:
-        try {
-            int id = Integer.parseInt(IDTextField.getText());
-            String firstname = firstnameTextField.getText();
-            String lastname = lastnameTextField.getText();
-            int age = Integer.parseInt(ageTextField.getText());
-            
-            this.users.add(new User(id, firstname, lastname, age));
+        // TODO add your handling code 
+        String id = IDTextField.getText();
+        String firstname = firstnameTextField.getText();
+        String lastname = lastnameTextField.getText();
+        String age = ageTextField.getText();
+        
+        Response response = UserController.registerUser(id, firstname, lastname, age);
+        
+        if (response.getStatus() >= 500) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+        } else if (response.getStatus() >= 400) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+        }else {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
             
             IDTextField.setText("");
             firstnameTextField.setText("");
             lastnameTextField.setText("");
             ageTextField.setText("");
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error", "Error", JOptionPane.ERROR_MESSAGE);
         }
+        //this.users.add(new User(id, firstname, lastname, age));
+         
+        
     }//GEN-LAST:event_registerButtonActionPerformed
 
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
