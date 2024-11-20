@@ -2,15 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package bank;
 
-/**
- *
- * @author edangulo
- */
+package core.controllers.utils;
 
-public enum TransactionType { // obviamente aquí será Open/closed
-    DEPOSIT,
-    WITHDRAW,
-    TRANSFER
+public class Response {
+    Status status;
+    String message;
+    Object object;
 }
