@@ -265,6 +265,11 @@ public class BankFrame extends javax.swing.JFrame {
         destinationAccountTextField.setToolTipText("");
 
         typeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Deposit", "Withdraw", "Transfer" }));
+        typeComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                typeComboBoxActionPerformed(evt);
+            }
+        });
 
         executeButton.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
         executeButton.setText("Execute");
@@ -722,6 +727,10 @@ public class BankFrame extends javax.swing.JFrame {
     private void sourceAccountTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sourceAccountTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_sourceAccountTextFieldActionPerformed
+
+    private void typeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeComboBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_typeComboBoxActionPerformed
 
     /**
      * @param args the command line arguments
