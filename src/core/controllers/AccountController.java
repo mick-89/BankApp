@@ -10,7 +10,9 @@ public class AccountController {
     public static Response createAccount(String userId, String initialBalance) {
         return new Response("cálmate ve", Status.NOT_IMPLEMENTED);
     }
-    
+    public static Response getAccount(String id) {
+        return new Response("cálmate ve", Status.NOT_IMPLEMENTED);
+    }
     public static Response getAccounts() {
         try {
             AccountStorage storage = AccountStorage.getInstance();

@@ -616,10 +616,15 @@ public class BankFrame extends javax.swing.JFrame {
         String destinationAccountId = destinationAccountTextField.getText();
         String amount = amountTextField.getText();
         
+        Account sourceAccount;
+        Account destinationAccount;
         
         switch (type) { // creo que debería ser ok usar un switch porque SOLID solo es para modelos
             case "Deposit": {
-                // algo así, pero no sé si sí vaya acá        
+                // algo así, pero no sé si sí vaya acá
+                
+                // tal vez tengo que pasarle es los ids de las cuentas al TransactionController
+                // en todo caso revisa las diapositivas y ora
                 Response response1 = AccountController.getAccount(destinationAccountId);
                 if (response1.getStatus() >= 500) {
                     JOptionPane.showMessageDialog(null, response1.getMessage(), "Error " + response1.getStatus(), JOptionPane.ERROR_MESSAGE);
@@ -630,11 +635,20 @@ public class BankFrame extends javax.swing.JFrame {
                 }else {
                     JOptionPane.showMessageDialog(null, response1.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
                 
-                    Account destinationAccount = response1.getObject();
+                    destinationAccount = response1.getObject();
                 }
                 Response response = TransactionController.makeDeposit(destinationAccount, amount);
                 
                 if (respone.getStatus >= 500) ...
+                /*if (destinationAccount != null) {
+                    destinationAccount.deposit(amount);
+
+                    this.transactions.add(new Transaction(TransactionType.DEPOSIT, null, destinationAccount, amount));
+
+                    sourceAccountTextField.setText("");
+                    destinationAccountTextField.setText("");
+                    amountTextField.setText("");
+                }*/
                 break;
             }
             case "Withdraw": {

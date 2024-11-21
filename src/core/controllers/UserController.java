@@ -55,7 +55,9 @@ public class UserController {
         }
         
     }
-    
+    public static Response getUser(String id) {
+        return new Response("cálmate ve", Status.NOT_IMPLEMENTED);
+    }
     public static Response getUsers() { // para la tabla
         try {
             UserStorage storage = UserStorage.getInstance();
