@@ -17,6 +17,7 @@ public class Transaction {
     private Account destinationAccount;
     private double amount;
     
+    // en efecto, creo que la lógica de transacciones se hace del lado este del modelo
     public Transaction(TransactionType type, Account sourceAccount, Account destinationAccount, double amount) {
         this.type = type;
         this.sourceAccount = sourceAccount;

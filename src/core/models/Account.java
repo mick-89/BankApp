@@ -44,6 +44,8 @@ public class Account {
     
     
     // no sé si estos rompan el Single responsibility
+    
+    // creo que se usaría como un event handler o algo así
     public void deposit(double amount) {
         this.balance += amount;
     }
