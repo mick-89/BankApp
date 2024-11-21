@@ -4,15 +4,15 @@
  */
 package core.views;
 
+import core.controllers.AccountController;
+import core.controllers.TransactionController;
 import core.controllers.UserController;
 import core.controllers.utils.Response;
 import core.models.Account;
 import core.models.Transaction;
-import core.models.TransactionType;
 import core.models.User;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -22,9 +22,9 @@ import javax.swing.table.DefaultTableModel;
  */
 public class BankFrame extends javax.swing.JFrame {
      
-    private ArrayList<Account> accounts;
+    /*private ArrayList<Account> accounts;
     private ArrayList<Transaction> transactions;
-    private ArrayList<User> users;
+    private ArrayList<User> users;*/
     
     
     /**
@@ -32,9 +32,9 @@ public class BankFrame extends javax.swing.JFrame {
      */
     public BankFrame() {
         initComponents();
-        this.accounts = new ArrayList<>();
+        /*this.accounts = new ArrayList<>();
         this.transactions = new ArrayList<>();
-        this.users = new ArrayList<>();
+        this.users = new ArrayList<>();*/
     }
 
     /**
@@ -79,17 +79,17 @@ public class BankFrame extends javax.swing.JFrame {
         usersPanel = new javax.swing.JPanel();
         jLabel14 = new javax.swing.JLabel();
         usersScrollPane = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        userTable = new javax.swing.JTable();
         refreshUsersButton = new javax.swing.JButton();
         accountsPanel = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
         accountsScrollPane = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        accountTable = new javax.swing.JTable();
         refreshAccountsButton = new javax.swing.JButton();
         transactionsPanel = new javax.swing.JPanel();
         jLabel16 = new javax.swing.JLabel();
         transactionsScrollPane = new javax.swing.JScrollPane();
-        jTable3 = new javax.swing.JTable();
+        transactionTable = new javax.swing.JTable();
         refreshTransactionsButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -338,7 +338,7 @@ public class BankFrame extends javax.swing.JFrame {
         jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel14.setText("List Users");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        userTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -357,7 +357,7 @@ public class BankFrame extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        usersScrollPane.setViewportView(jTable1);
+        usersScrollPane.setViewportView(userTable);
 
         refreshUsersButton.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
         refreshUsersButton.setText("Refresh");
@@ -401,7 +401,7 @@ public class BankFrame extends javax.swing.JFrame {
         jLabel15.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel15.setText("List Accounts");
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        accountTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
                 {null, null, null},
@@ -420,7 +420,7 @@ public class BankFrame extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        accountsScrollPane.setViewportView(jTable2);
+        accountsScrollPane.setViewportView(accountTable);
 
         refreshAccountsButton.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
         refreshAccountsButton.setText("Refresh");
@@ -462,7 +462,7 @@ public class BankFrame extends javax.swing.JFrame {
         jLabel16.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel16.setText("List Transactions");
 
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+        transactionTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -488,7 +488,7 @@ public class BankFrame extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        transactionsScrollPane.setViewportView(jTable3);
+        transactionsScrollPane.setViewportView(transactionTable);
 
         refreshTransactionsButton.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
         refreshTransactionsButton.setText("Refresh");
@@ -772,40 +772,76 @@ public class BankFrame extends javax.swing.JFrame {
 
     private void refreshUsersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshUsersButtonActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel model = (DefaultTableModel) userTable.getModel();
         model.setRowCount(0);
+        
+        final ArrayList<User> users;
+        
+        Response response = UserController.getUsers();
+        if (response.getStatus() >= 500) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+        }
+        else if (response.getStatus() >= 400) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
+            users = (ArrayList<User>)response.getObject();
         
         // En los requisitos de controlador decía lo del orden así que supongo 
         // que esta parte iría por allá?
-        this.users.sort((obj1, obj2) -> (obj1.getId() - obj2.getId()));
+        // this.users.sort((obj1, obj2) -> (obj1.getId() - obj2.getId()));
         
-        for (User user : this.users) {
-            model.addRow(new Object[]{user.getId(), user.getFirstname() + " " + user.getLastname(), user.getAge(), user.getNumAccounts()});
+            for (User user : users) {
+                model.addRow(new Object[]{user.getId(), user.getFirstname() + " " + user.getLastname(), user.getAge(), user.getNumAccounts()});
+            }
         }
     }//GEN-LAST:event_refreshUsersButtonActionPerformed
 
     private void refreshAccountsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshAccountsButtonActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+        DefaultTableModel model = (DefaultTableModel) accountTable.getModel();
         model.setRowCount(0);
         
-        this.accounts.sort((obj1, obj2) -> (obj1.getId().compareTo(obj2.getId())));
+        ArrayList<Account> accounts;
+        //this.accounts.sort((obj1, obj2) -> (obj1.getId().compareTo(obj2.getId())));
+        Response response = AccountController.getAccounts();
+        if (response.getStatus() >= 500) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+        }
+        else if (response.getStatus() >= 400) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
+            accounts = (ArrayList<Account>)response.getObject();
         
-        for (Account account : this.accounts) {
-            model.addRow(new Object[]{account.getId(), account.getOwner().getId(), account.getBalance()});
+            for (Account account : accounts) {
+                model.addRow(new Object[]{account.getId(), account.getOwner().getId(), account.getBalance()});
+            }
         }
     }//GEN-LAST:event_refreshAccountsButtonActionPerformed
 
     private void refreshTransactionsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshTransactionsButtonActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model = (DefaultTableModel) jTable3.getModel();
+        DefaultTableModel model = (DefaultTableModel) transactionTable.getModel();
         model.setRowCount(0);
         
-        ArrayList<Transaction> transactionsCopy = (ArrayList<Transaction>) this.transactions.clone();
-        Collections.reverse(transactionsCopy);
+        final ArrayList<Transaction> transactions;
+        Response response = TransactionController.getTransactions();
+        if (response.getStatus() >= 500) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+        }
+        else if (response.getStatus() >= 400) {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
+            transactions = (ArrayList<Transaction>)response.getObject();
         
-        for (Transaction transaction : transactionsCopy) {
-            model.addRow(new Object[]{transaction.getType().name(), (transaction.getSourceAccount() != null ? transaction.getSourceAccount().getId() : "None"), (transaction.getDestinationAccount()!= null ? transaction.getDestinationAccount().getId() : "None"), transaction.getAmount()});
+        //ArrayList<Transaction> transactionsCopy = (ArrayList<Transaction>) this.transactions.clone();
+        //Collections.reverse(transactionsCopy);
+        
+            for (Transaction transaction : transactions) {
+                model.addRow(new Object[]{transaction.getType().name(), (transaction.getSourceAccount() != null ? transaction.getSourceAccount().getId() : "None"), (transaction.getDestinationAccount()!= null ? transaction.getDestinationAccount().getId() : "None"), transaction.getAmount()});
+            }
         }
     }//GEN-LAST:event_refreshTransactionsButtonActionPerformed
 
@@ -825,6 +861,7 @@ public class BankFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField IDTextField;
+    private javax.swing.JTable accountTable;
     private javax.swing.JPanel accountsPanel;
     private javax.swing.JScrollPane accountsScrollPane;
     private javax.swing.JTextField ageTextField;
@@ -852,9 +889,6 @@ public class BankFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JTable jTable3;
     private javax.swing.JTextField lastnameTextField;
     private javax.swing.JButton refreshAccountsButton;
     private javax.swing.JButton refreshTransactionsButton;
@@ -863,10 +897,12 @@ public class BankFrame extends javax.swing.JFrame {
     private javax.swing.JPanel registerPanel;
     private javax.swing.JTextField sourceAccountTextField;
     private javax.swing.JPanel transactionPanel;
+    private javax.swing.JTable transactionTable;
     private javax.swing.JPanel transactionsPanel;
     private javax.swing.JScrollPane transactionsScrollPane;
     private javax.swing.JComboBox<String> typeComboBox;
     private javax.swing.JTextField userIDTextField;
+    private javax.swing.JTable userTable;
     private javax.swing.JPanel usersPanel;
     private javax.swing.JScrollPane usersScrollPane;
     // End of variables declaration//GEN-END:variables
