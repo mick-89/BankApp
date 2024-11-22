@@ -620,7 +620,7 @@ public class BankFrame extends javax.swing.JFrame {
                 
                     destinationAccount = (Account)response1.getObject();
                 }
-                Response response = TransactionController.makeDeposit(destinationAccount, amount);
+                Response response = TransactionController.createDeposit(destinationAccountId, amount);
                 
                 //if (respone.getStatus >= 500) ...
                 /*if (destinationAccount != null) {
@@ -770,7 +770,8 @@ public class BankFrame extends javax.swing.JFrame {
                 amountTextField.setText("");
                 break;
             }
-        }*/
+        }
+        */
     }//GEN-LAST:event_executeButtonActionPerformed
 
     private void refreshUsersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshUsersButtonActionPerformed
@@ -787,7 +788,7 @@ public class BankFrame extends javax.swing.JFrame {
         else if (response.getStatus() >= 400) {
             JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
+            
             users = (ArrayList<User>)response.getObject();
         
         // En los requisitos de controlador decía lo del orden así que supongo 
@@ -797,6 +798,7 @@ public class BankFrame extends javax.swing.JFrame {
             for (User user : users) {
                 model.addRow(new Object[]{user.getId(), user.getFirstname() + " " + user.getLastname(), user.getAge(), user.getNumAccounts()});
             }
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_refreshUsersButtonActionPerformed
 

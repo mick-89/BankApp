@@ -8,6 +8,7 @@ package core.controllers;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.models.User;
+import core.models.storage.UserStorage;
 import java.util.ArrayList;
 
 public class UserController {
@@ -85,6 +86,5 @@ public class UserController {
         } catch (Exception e) {
             return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);            
         }
-        //return new Response("cálmate ve", Status.NOT_IMPLEMENTED);
     }
 }

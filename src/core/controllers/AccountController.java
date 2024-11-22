@@ -8,6 +8,7 @@ import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.models.Account;
 import core.models.User;
+import core.models.storage.AccountStorage;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -15,23 +16,24 @@ public class AccountController {
 
     public static Response createAccount(String userId, String initialBalance) {
         try {
-            int userIdInt, initialBalanceInt;
+            int userIdInt;
+            double initialBalanceInt;
 
             try {
                 userIdInt = Integer.parseInt(userId);
-                if (userIdInt < 0) {
-                    return new Response("ID must be positive", Status.BAD_REQUEST);
+                if (userIdInt < 0 || userIdInt>999999999) {
+                    return new Response("ID must be positive and have less than 10 digits", Status.BAD_REQUEST);
                 }
             } catch (NumberFormatException e) {
                 return new Response("Id must be numeric", Status.BAD_REQUEST);
             }
             try {
-                initialBalanceInt = Integer.parseInt(initialBalance);
+                initialBalanceInt = Double.parseDouble(initialBalance);
                 if (initialBalanceInt < 0) {
-                    return new Response("initialBalance must be positive", Status.BAD_REQUEST);
+                    return new Response("initial Balance must be positive", Status.BAD_REQUEST);
                 }
             } catch (NumberFormatException e) {
-                return new Response("initialBalance must be numeric", Status.BAD_REQUEST);
+                return new Response("initial Balance must be numeric", Status.BAD_REQUEST);
             }
             User selectedUser;
             selectedUser = (User) UserController.getUser(userId).getObject();
@@ -40,13 +42,15 @@ public class AccountController {
                 int first = random.nextInt(1000);
                 int second = random.nextInt(1000000);
                 int third = random.nextInt(100);
-
+                
                 String accountId = String.format("%03d", first) + "-" + String.format("%06d", second) + "-" + String.format("%02d", third);
-                accountStorage storage = accountStorage.getInstance();
-                storage.add(new Account(accountId, selectedUser, initialBalanceInt));
-
+                AccountStorage storage = AccountStorage.getInstance();
+                Account a = new Account(accountId, selectedUser, initialBalanceInt);
+ 
+                storage.addAccount(a);
+                return new Response("account created successfully", Status.CREATED);
             }
-            return new Response("account created successfully", Status.CREATED);
+            return new Response ("User not found", Status.BAD_REQUEST);
         } catch (Exception e) {
             return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);
         }
@@ -55,17 +59,8 @@ public class AccountController {
 
     public static Response getAccount(String id) {
         try{
-            int idInt;
-            try{
-                idInt = Integer.parseInt(id);
-                if(idInt<0){
-                    return new Response("Id must be positive", Status.BAD_REQUEST);
-                }
-            }catch(NumberFormatException e){
-                 return new Response("Id must be numeric", Status.BAD_REQUEST);
-            }
             AccountStorage storage = AccountStorage.getInstance();
-            Account account = storage.getAccount(idInt);
+            Account account = storage.getAccount(id);
             if(account == null){
                 return new Response("Account not found", Status.NOT_FOUND);
             }
