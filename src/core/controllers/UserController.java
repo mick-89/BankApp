@@ -8,6 +8,7 @@ package core.controllers;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.models.User;
+import java.util.ArrayList;
 
 public class UserController {
     public static Response registerUser(String id, String firstname, String lastname, String age) {
@@ -39,7 +40,6 @@ public class UserController {
             } catch (NumberFormatException e) {
                 return new Response("age must be numeric", Status.BAD_REQUEST);
             }
-            
             // something something get storage reference
             // if (!storage.addUser(...)
             // return new Response([condición que tuvo que fallar], Status.BAD_REQUEST)
@@ -56,7 +56,26 @@ public class UserController {
         
     }
     public static Response getUser(String id) {
-        return new Response("cálmate ve", Status.NOT_IMPLEMENTED);
+        try{
+            int idInt;
+            try{
+                idInt = Integer.parseInt(id);
+                if(idInt<0){
+                    return new Response("Id must be positive", Status.BAD_REQUEST);
+                }
+            }catch(NumberFormatException e){
+                 return new Response("Id must be numeric", Status.BAD_REQUEST);
+            }
+            UserStorage storage = UserStorage.getInstance();
+            User user = storage.getUser(idInt);
+            if(user == null){
+                return new Response("User not found", Status.NOT_FOUND);
+            }
+            return new Response("User found", Status.OK, user);
+            
+        }catch (Exception e) {
+              return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);
+        }
     }
     public static Response getUsers() { // para la tabla
         try {

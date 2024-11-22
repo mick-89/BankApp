@@ -571,28 +571,11 @@ public class BankFrame extends javax.swing.JFrame {
         String userId = userIDTextField.getText();
         String initialBalance = initialBalanceTextField.getText();
 
-        // User selectedUser = null;
+        // 
         
         Response response = AccountController.createAccount(userId, initialBalance);
         
-        /*for (User user : this.users) { 
-            // creo que esto no se debería hacer aquí pero no sé porque no presté atención
-            if (user.getId() == userId && selectedUser == null) {
-                selectedUser = user;
-            }
-        }
-
-        if (selectedUser != null) {
-            Random random = new Random();
-            int first = random.nextInt(1000);
-            int second = random.nextInt(1000000);
-            int third = random.nextInt(100);
-
-            String accountId = String.format("%03d", first) + "-" + String.format("%06d", second) + "-" + String.format("%02d", third);
-
-            this.accounts.add(new Account(accountId, selectedUser, initialBalance));
-
-        }*/
+        /**/
         
         
         if (response.getStatus() >= 500) {
@@ -635,11 +618,11 @@ public class BankFrame extends javax.swing.JFrame {
                 }else {
                     JOptionPane.showMessageDialog(null, response1.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
                 
-                    destinationAccount = response1.getObject();
+                    destinationAccount = (Account)response1.getObject();
                 }
                 Response response = TransactionController.makeDeposit(destinationAccount, amount);
                 
-                if (respone.getStatus >= 500) ...
+                //if (respone.getStatus >= 500) ...
                 /*if (destinationAccount != null) {
                     destinationAccount.deposit(amount);
 
@@ -662,11 +645,11 @@ public class BankFrame extends javax.swing.JFrame {
                 }else {
                     JOptionPane.showMessageDialog(null, response1.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
                 
-                    Account sourceAccount = response1.getObject();
+                    sourceAccount = (Account)response1.getObject();
                 }
                 
                 Response response = TransactionController.makeWithdrawal(sourceAccount, amount);
-                if (response.getStatus() >= 500) ...
+               // if (response.getStatus() >= 500) ...
                 break;
             }
             case "Transfer": {
@@ -696,7 +679,7 @@ public class BankFrame extends javax.swing.JFrame {
                 }
                 
                 Response response = TransactionController.makeTransferal(sourceAccount, destinationAccout, amount);
-                if (response.getStatus() >= 500) ...
+              //  if (response.getStatus() >= 500) ...
             }
             default: {
                 sourceAccountTextField.setText("");
@@ -705,7 +688,13 @@ public class BankFrame extends javax.swing.JFrame {
                 break;
             }
         }
-        
+            //esto no va aqui
+            /*for (User user : this.users) {
+                // creo que esto no se debería hacer aquí pero no sé porque no presté atención
+                if (user.getId() == userId && selectedUser == null) {
+                    selectedUser = user;
+                }
+            }*/
         sourceAccountTextField.setText("");
         destinationAccountTextField.setText("");
         amountTextField.setText("");

@@ -6,6 +6,8 @@
 package core.controllers;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
+import core.models.Transaction;
+import java.util.ArrayList;
 
 public class TransactionController {
     public static Response createDeposit(String destinationAccount, String amount) {
