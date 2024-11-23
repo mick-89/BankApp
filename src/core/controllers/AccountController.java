@@ -76,6 +76,7 @@ public class AccountController {
         try {
             AccountStorage storage = AccountStorage.getInstance();
             ArrayList<Account> accounts = storage.getAccounts();
+            accounts.sort((obj1, obj2) -> (obj1.getId().compareTo(obj2.getId())));            
             return new Response("Account list found", Status.OK, accounts);
         } catch (Exception e) {
             return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);

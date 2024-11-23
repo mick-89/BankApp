@@ -82,6 +82,7 @@ public class UserController {
         try {
             UserStorage storage = UserStorage.getInstance();
             ArrayList<User> users = storage.getUsers();
+            users.sort((obj1, obj2) -> (obj1.getId() - obj2.getId()));
             return new Response("User list found", Status.OK, users);
         } catch (Exception e) {
             return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);            

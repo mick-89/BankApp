@@ -12,7 +12,6 @@ import core.models.Account;
 import core.models.Transaction;
 import core.models.User;
 import java.util.ArrayList;
-import java.util.Collections;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -599,179 +598,56 @@ public class BankFrame extends javax.swing.JFrame {
         String destinationAccountId = destinationAccountTextField.getText();
         String amount = amountTextField.getText();
         
-        Account sourceAccount;
-        Account destinationAccount;
-        
         switch (type) { // creo que debería ser ok usar un switch porque SOLID solo es para modelos
-            case "Deposit": {
-                // algo así, pero no sé si sí vaya acá
-                
-                // tal vez tengo que pasarle es los ids de las cuentas al TransactionController
-                // en todo caso revisa las diapositivas y ora
-                Response response1 = AccountController.getAccount(destinationAccountId);
-                if (response1.getStatus() >= 500) {
-                    JOptionPane.showMessageDialog(null, response1.getMessage(), "Error " + response1.getStatus(), JOptionPane.ERROR_MESSAGE);
-                    return;
-                } else if (response1.getStatus() >= 400) {
-                    JOptionPane.showMessageDialog(null, response1.getMessage(), "Error " + response1.getStatus(), JOptionPane.WARNING_MESSAGE);
-                    return;
-                }else {
-                    JOptionPane.showMessageDialog(null, response1.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
-                
-                    destinationAccount = (Account)response1.getObject();
-                }
+            case "Deposit" ->  {                
                 Response response = TransactionController.createDeposit(destinationAccountId, amount);
-                
-                //if (respone.getStatus >= 500) ...
-                /*if (destinationAccount != null) {
-                    destinationAccount.deposit(amount);
-
-                    this.transactions.add(new Transaction(TransactionType.DEPOSIT, null, destinationAccount, amount));
-
+                if (response.getStatus() >= 500) {
+                    JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+                } else if (response.getStatus() >= 400) {
+                    JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+                }else {
+                    JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
+                    
                     sourceAccountTextField.setText("");
                     destinationAccountTextField.setText("");
                     amountTextField.setText("");
-                }*/
-                break;
-            }
-            case "Withdraw": {
-                Response response1 = AccountController.getAccount(sourceAccountId);
-                if (response1.getStatus() >= 500) {
-                    JOptionPane.showMessageDialog(null, response1.getMessage(), "Error " + response1.getStatus(), JOptionPane.ERROR_MESSAGE);
-                    return;
-                } else if (response1.getStatus() >= 400) {
-                    JOptionPane.showMessageDialog(null, response1.getMessage(), "Error " + response1.getStatus(), JOptionPane.WARNING_MESSAGE);
-                    return;
-                }else {
-                    JOptionPane.showMessageDialog(null, response1.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
-                
-                    sourceAccount = (Account)response1.getObject();
                 }
-                
-                Response response = TransactionController.makeWithdrawal(sourceAccount, amount);
-               // if (response.getStatus() >= 500) ...
-                break;
             }
-            case "Transfer": {
-                Response response1 = AccountController.getAccount(sourceAccountId);
-                if (response1.getStatus() >= 500) {
-                    JOptionPane.showMessageDialog(null, response1.getMessage(), "Error " + response1.getStatus(), JOptionPane.ERROR_MESSAGE);
-                    return;
-                } else if (response1.getStatus() >= 400) {
-                    JOptionPane.showMessageDialog(null, response1.getMessage(), "Error " + response1.getStatus(), JOptionPane.WARNING_MESSAGE);
-                    return;
+            case "Withdraw" ->  {
+                Response response = TransactionController.createWithdrawal(sourceAccountId, amount);
+                if (response.getStatus() >= 500) {
+                    JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+                } else if (response.getStatus() >= 400) {
+                    JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
                 }else {
-                    JOptionPane.showMessageDialog(null, response1.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
-                
-                    Account sourceAccount = response1.getObject();
+                    JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
+                    
+                    sourceAccountTextField.setText("");
+                    destinationAccountTextField.setText("");
+                    amountTextField.setText("");
                 }
-                Response response2 = AccountController.getAccount(destinationAccountId);
-                if (response2.getStatus() >= 500) {
-                    JOptionPane.showMessageDialog(null, response2.getMessage(), "Error " + response2.getStatus(), JOptionPane.ERROR_MESSAGE);
-                    return;
-                } else if (response1.getStatus() >= 400) {
-                    JOptionPane.showMessageDialog(null, response2.getMessage(), "Error " + response2.getStatus(), JOptionPane.WARNING_MESSAGE);
-                    return;
-                }else {
-                    JOptionPane.showMessageDialog(null, response2.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
-                
-                    Account destinationAccount = response2.getObject();
-                }
-                
-                Response response = TransactionController.makeTransferal(sourceAccount, destinationAccout, amount);
-              //  if (response.getStatus() >= 500) ...
             }
-            default: {
+            case "Transfer" ->  {
+                Response response = TransactionController.createTransferal(sourceAccountId, destinationAccountId, amount);
+                if (response.getStatus() >= 500) {
+                    JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.ERROR_MESSAGE);
+                } else if (response.getStatus() >= 400) {
+                    JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
+                }else {
+                    JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
+                    
+                    sourceAccountTextField.setText("");
+                    destinationAccountTextField.setText("");
+                    amountTextField.setText("");
+                }
+            }
+            default ->  {
                 sourceAccountTextField.setText("");
                 destinationAccountTextField.setText("");
                 amountTextField.setText("");
-                break;
             }
         }
-            //esto no va aqui
-            /*for (User user : this.users) {
-                // creo que esto no se debería hacer aquí pero no sé porque no presté atención
-                if (user.getId() == userId && selectedUser == null) {
-                    selectedUser = user;
-                }
-            }*/
-        sourceAccountTextField.setText("");
-        destinationAccountTextField.setText("");
-        amountTextField.setText("");
-        /*switch (type) { // sí nada de esto va acá
-            case "Deposit": {
-                Account destinationAccount = null;
-                for (Account account : this.accounts) {
-                    if (account.getId().equals(destinationAccountId)) {
-                        destinationAccount = account;
-                    }
-                }
-                if (destinationAccount != null) {
-                    destinationAccount.deposit(amount);
-
-                    this.transactions.add(new Transaction(TransactionType.DEPOSIT, null, destinationAccount, amount));
-
-                    sourceAccountTextField.setText("");
-                    destinationAccountTextField.setText("");
-                    amountTextField.setText("");
-                }
-                break;
-            }
-            case "Withdraw": {
-                String sourceAccountId = sourceAccountTextField.getText();
-                double amount = Double.parseDouble(amountTextField.getText());
-
-                Account sourceAccount = null;
-                for (Account account : this.accounts) {
-                    if (account.getId().equals(sourceAccountId)) {
-                        sourceAccount = account;
-                    }
-                }
-                if (sourceAccount != null && sourceAccount.withdraw(amount)) {
-                    this.transactions.add(new Transaction(TransactionType.WITHDRAW, sourceAccount, null, amount));
-
-                    sourceAccountTextField.setText("");
-                    destinationAccountTextField.setText("");
-                    amountTextField.setText("");
-                }
-                break;
-            }
-            case "Transfer": {
-                String sourceAccountId = sourceAccountTextField.getText();
-                String destinationAccountId = destinationAccountTextField.getText();
-                double amount = Double.parseDouble(amountTextField.getText());
-
-                Account sourceAccount = null;
-                Account destinationAccount = null;
-                for (Account account : this.accounts) {
-                    if (account.getId().equals(sourceAccountId)) {
-                        sourceAccount = account;
-                    }
-                }
-                for (Account account : this.accounts) {
-                    if (account.getId().equals(destinationAccountId)) {
-                        destinationAccount = account;
-                    }
-                }
-                if (sourceAccount != null && destinationAccount != null && sourceAccount.withdraw(amount)) {
-                    destinationAccount.deposit(amount);
-
-                    this.transactions.add(new Transaction(TransactionType.TRANSFER, sourceAccount, destinationAccount, amount));
-
-                    sourceAccountTextField.setText("");
-                    destinationAccountTextField.setText("");
-                    amountTextField.setText("");
-                }
-                break;
-            }
-            default: {
-                sourceAccountTextField.setText("");
-                destinationAccountTextField.setText("");
-                amountTextField.setText("");
-                break;
-            }
-        }
-        */
+        // creo que debería ser ok usar un switch porque SOLID solo es para modelos
     }//GEN-LAST:event_executeButtonActionPerformed
 
     private void refreshUsersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshUsersButtonActionPerformed
@@ -816,12 +692,12 @@ public class BankFrame extends javax.swing.JFrame {
         else if (response.getStatus() >= 400) {
             JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
             accounts = (ArrayList<Account>)response.getObject();
         
             for (Account account : accounts) {
                 model.addRow(new Object[]{account.getId(), account.getOwner().getId(), account.getBalance()});
             }
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_refreshAccountsButtonActionPerformed
 
@@ -838,15 +714,12 @@ public class BankFrame extends javax.swing.JFrame {
         else if (response.getStatus() >= 400) {
             JOptionPane.showMessageDialog(null, response.getMessage(), "Error " + response.getStatus(), JOptionPane.WARNING_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
             transactions = (ArrayList<Transaction>)response.getObject();
-        
-        //ArrayList<Transaction> transactionsCopy = (ArrayList<Transaction>) this.transactions.clone();
-        //Collections.reverse(transactionsCopy);
-        
+            
             for (Transaction transaction : transactions) {
                 model.addRow(new Object[]{transaction.getType().name(), (transaction.getSourceAccount() != null ? transaction.getSourceAccount().getId() : "None"), (transaction.getDestinationAccount()!= null ? transaction.getDestinationAccount().getId() : "None"), transaction.getAmount()});
             }
+            JOptionPane.showMessageDialog(null, response.getMessage(), "Response Message", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_refreshTransactionsButtonActionPerformed
 

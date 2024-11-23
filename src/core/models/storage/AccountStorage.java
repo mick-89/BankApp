@@ -25,7 +25,7 @@ public class AccountStorage {
     
     public boolean addAccount(Account account) {
         for (Account u : this.accounts) {
-            if (u.getId() == account.getId()) {
+            if (u.getId().equals(account.getId())) {
                 return false;
             }
         }

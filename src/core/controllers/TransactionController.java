@@ -11,6 +11,7 @@ import core.models.Transaction;
 import core.models.TransactionType;
 import core.models.storage.TransactionStorage;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class TransactionController {
 
@@ -26,8 +27,18 @@ public class TransactionController {
                 return new Response("amount must be positive", Status.BAD_REQUEST);
             }
             Account destinationAccount = (Account) AccountController.getAccount(destinationAccountId).getObject();
-            destinationAccount.deposit(amountDouble);
-            return new Response("amount deposited", Status.OK);
+            if (destinationAccount != null) {
+                destinationAccount.deposit(amountDouble);
+                TransactionStorage storage = TransactionStorage.getInstance();
+                // sí sé que esto habrá que SOLID ificarlo luego
+                if (storage.addTransaction(new Transaction(TransactionType.DEPOSIT, null, destinationAccount, amountDouble))) {
+                    return new Response("amount deposited", Status.CREATED);
+                } else{
+                    return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);                    
+                }
+            } else {
+                return new Response("Destination account not found", Status.NOT_FOUND);
+            }
         } catch (Exception e) {
             return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);
         }
@@ -36,7 +47,6 @@ public class TransactionController {
     public static Response createWithdrawal(String sourceAccountId, String amount) {
         try {
             double amountDouble;
-            Account sourceAccount = (Account) AccountController.getAccount(sourceAccountId).getObject();
             try {
                 amountDouble = Double.parseDouble(amount);
                 if (amountDouble < 0) {
@@ -45,24 +55,71 @@ public class TransactionController {
             } catch (NumberFormatException e) {
                 return new Response("amount must be numeric", Status.BAD_REQUEST);
             }
-            if (!sourceAccount.withdraw(amountDouble)) {
-                return new Response("insufficient money", Status.BAD_REQUEST);
+            Account sourceAccount = (Account) AccountController.getAccount(sourceAccountId).getObject();
+            if (sourceAccount != null) {
+                if (!sourceAccount.withdraw(amountDouble)) {
+                    return new Response("insufficient money", Status.BAD_REQUEST);
+                }
+                TransactionStorage storage = TransactionStorage.getInstance();
+                // sí sé que esto habrá que SOLID ificarlo luego
+                if (storage.addTransaction(new Transaction(TransactionType.WITHDRAW, sourceAccount, null, amountDouble))) {
+                    return new Response("amount withdrawed", Status.CREATED);
+                } else{
+                    return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);                    
+                }
+            } else {
+                return new Response("Source account not found", Status.NOT_FOUND);
             }
-            return new Response("amount Withdrawed", Status.OK);
         } catch (Exception e) {
             return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);
         }
     }
 
-    public static Response createTransferal(String sourceAccount, String targetAccount, String amount) {
-        return new Response("cálmate ve", Status.NOT_IMPLEMENTED);
+    public static Response createTransferal(String sourceAccountId, String targetAccountId, String amount) {
+        try {
+            double amountDouble;
+            try {
+                amountDouble = Double.parseDouble(amount);
+                if (amountDouble < 0) {
+                    return new Response("amount must be positive", Status.BAD_REQUEST);
+                }
+            } catch (NumberFormatException e) {
+                return new Response("amount must be numeric", Status.BAD_REQUEST);
+            }
+            
+            Account sourceAccount = (Account) AccountController.getAccount(sourceAccountId).getObject();
+            if (sourceAccount == null) {
+                return new Response("Source account not found", Status.NOT_FOUND);
+            }
+            Account targetAccount = (Account) AccountController.getAccount(targetAccountId).getObject();
+            if (targetAccount == null) {
+                return new Response("Target account not found", Status.NOT_FOUND);
+            }
+            
+            if (!sourceAccount.withdraw(amountDouble)) {
+                return new Response("target account has insufficient money", Status.BAD_REQUEST);
+            }
+            targetAccount.deposit(amountDouble);
+            TransactionStorage storage = TransactionStorage.getInstance();
+            
+            // sí sé que esto habrá que SOLID ificarlo luego
+            if (storage.addTransaction(new Transaction(TransactionType.TRANSFER, sourceAccount, targetAccount, amountDouble))) {
+                return new Response("amount transfered", Status.CREATED);
+            } else{
+                return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);                    
+            }
+        } catch (Exception e) {
+            return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);
+        }
     }
 
     public static Response getTransactions() {
         try {
             TransactionStorage storage = TransactionStorage.getInstance();
             ArrayList<Transaction> transactions = storage.getTransactions();
-            return new Response("Transaction list found", Status.OK, transactions);
+            ArrayList<Transaction> transactionsCopy = (ArrayList<Transaction>)transactions.clone();
+            Collections.reverse(transactionsCopy);
+            return new Response("Transaction list found", Status.OK, transactionsCopy);
         } catch (Exception e) {
             return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);
         }
