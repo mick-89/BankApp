@@ -11,10 +11,10 @@ package core.models;
 public class Account {
     
     private String id;
-    private User owner; // creo que también principio D?
-    private double balance;
+    private Owner owner; // creo que también principio D?
+    double balance; // visibilidad default por el EventHandler
 
-    public Account(String id, User owner) {
+    public Account(String id, Owner owner) {
         this.id = id;
         this.owner = owner;
         this.balance = 0;
@@ -22,7 +22,7 @@ public class Account {
         this.owner.addAccount(this);
     }
     
-    public Account(String id, User owner, double balance) {
+    public Account(String id, Owner owner, double balance) {
         this.id = id;
         this.owner = owner;
         this.balance = balance;
@@ -34,7 +34,7 @@ public class Account {
         return id;
     }
 
-    public User getOwner() {
+    public Owner getOwner() {
         return owner;
     }
 
@@ -46,7 +46,7 @@ public class Account {
     // no sé si estos rompan el Single responsibility
     
     // creo que se usaría como un event handler o algo así
-    public void deposit(double amount) {
+    /*public void deposit(double amount) {
         this.balance += amount;
     }
     
@@ -57,5 +57,5 @@ public class Account {
         this.balance -= amount;
         return true;
     }
-    
+    */
 }

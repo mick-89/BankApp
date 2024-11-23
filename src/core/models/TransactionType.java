@@ -9,7 +9,7 @@ package core.models;
  * @author edangulo
  */
 
-public enum TransactionType { // obviamente aquí será Open/closed
+public enum TransactionType { // ok tal vez aquí no necesariamente sea ocp
     DEPOSIT,
     WITHDRAW,
     TRANSFER

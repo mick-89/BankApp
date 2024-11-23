@@ -9,7 +9,6 @@ package core.models;
  * @author edangulo
  */
 
-// creo que esta clase era lo que decía el man de que le falta la lógica y que está dentro de la interfaz
 public class Transaction {
     
     private TransactionType type;
@@ -17,7 +16,7 @@ public class Transaction {
     private Account destinationAccount;
     private double amount;
     
-    // en efecto, creo que la lógica de transacciones se hace del lado este del modelo
+    
     public Transaction(TransactionType type, Account sourceAccount, Account destinationAccount, double amount) {
         this.type = type;
         this.sourceAccount = sourceAccount;

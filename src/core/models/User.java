@@ -10,7 +10,7 @@ import java.util.ArrayList;
  *
  * @author edangulo
  */
-public class User {
+public class User implements Owner {
     
     private int id;
     private String firstname;
@@ -25,7 +25,8 @@ public class User {
         this.age = age;
         this.accounts = new ArrayList<>();
     }
-
+    
+    @Override
     public int getId() {
         return id;
     }
@@ -46,6 +47,7 @@ public class User {
         return this.accounts.size();
     }
     
+    @Override
     public void addAccount(Account account) {
         this.accounts.add(account);
     }
