@@ -9,6 +9,7 @@ import core.views.BankFrame;
 
 public class Main {
     public static void main(String[] args) {
+        
         System.out.println("hello, moto");
         BankFrame view = new BankFrame();
         view.setVisible(true);
