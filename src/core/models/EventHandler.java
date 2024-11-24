@@ -6,8 +6,6 @@
 package core.models;
 
 public class EventHandler {
-    // Personalmente me encantaría hacer esta clase estática pero el parcial no
-    // es el momento ideal para ponerse a experimentar.
     private Account account;
     
     public EventHandler(final Account a) {
