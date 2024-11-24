@@ -7,6 +7,7 @@ package core.controllers;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.models.Account;
+import core.models.EventHandler;
 import core.models.Transaction;
 import core.models.TransactionType;
 import core.models.storage.TransactionStorage;
@@ -28,7 +29,8 @@ public class TransactionController {
             }
             Account destinationAccount = (Account) AccountController.getAccount(destinationAccountId).getObject();
             if (destinationAccount != null) {
-                destinationAccount.deposit(amountDouble);
+                EventHandler e = new EventHandler(destinationAccount);
+                e.deposit(amountDouble);
                 TransactionStorage storage = TransactionStorage.getInstance();
                 // sí sé que esto habrá que SOLID ificarlo luego
                 if (storage.addTransaction(new Transaction(TransactionType.DEPOSIT, null, destinationAccount, amountDouble))) {
@@ -57,7 +59,8 @@ public class TransactionController {
             }
             Account sourceAccount = (Account) AccountController.getAccount(sourceAccountId).getObject();
             if (sourceAccount != null) {
-                if (!sourceAccount.withdraw(amountDouble)) {
+                EventHandler e = new EventHandler(sourceAccount);
+                if (!e.withdraw(amountDouble)) {
                     return new Response("insufficient money", Status.BAD_REQUEST);
                 }
                 TransactionStorage storage = TransactionStorage.getInstance();
@@ -95,11 +98,12 @@ public class TransactionController {
             if (targetAccount == null) {
                 return new Response("Target account not found", Status.NOT_FOUND);
             }
-            
-            if (!sourceAccount.withdraw(amountDouble)) {
+            EventHandler e1 = new EventHandler(sourceAccount);
+            if (!e1.withdraw(amountDouble)) {
                 return new Response("target account has insufficient money", Status.BAD_REQUEST);
             }
-            targetAccount.deposit(amountDouble);
+            EventHandler e2 = new EventHandler(targetAccount);
+            e2.deposit(amountDouble);
             TransactionStorage storage = TransactionStorage.getInstance();
             
             // sí sé que esto habrá que SOLID ificarlo luego

@@ -14,6 +14,7 @@ public class EventHandler {
         account = a;
     }
     
+    
     public void deposit(double amount) {
         account.balance += amount;
     }
@@ -26,4 +27,55 @@ public class EventHandler {
         return true;
     }
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // estas siguen siendo 2 responsabilidades...                             🤣 
 }

@@ -45,15 +45,5 @@ public class UserStorage {
         return this.users;
     }
     
-    public boolean delUser(int id) {
-        for (User user : this.users) {
-            if (user.getId() == id) {
-                this.users.remove(user);
-                return true;
-            }
-        }
-        return false;
-    }
-    
 
 }
