@@ -16,7 +16,7 @@ public class User implements Owner {
     private String firstname;
     private String lastname;
     private int age;
-    private ArrayList<Account> accounts; // principio D
+    private ArrayList<Account> accounts;
 
     public User(int id, String firstname, String lastname, int age) {
         this.id = id;
@@ -27,8 +27,13 @@ public class User implements Owner {
     }
     
     @Override
-    public int getId() {
+    public Integer getId() {
         return id;
+    }
+    
+    @Override
+    public boolean hasMatchingId(Object id) {
+        return this.id == (Integer)id;
     }
 
     public String getFirstname() {

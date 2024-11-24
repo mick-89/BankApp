@@ -8,8 +8,9 @@ package core.controllers;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.models.User;
-import core.models.storage.UserStorage;
+import core.models.storage.IdStorage;
 import java.util.ArrayList;
+import main.Global;
 
 public class UserController {
     public static Response registerUser(String id, String firstname, String lastname, String age) {
@@ -44,8 +45,8 @@ public class UserController {
             // something something get storage reference
             // if (!storage.addUser(...)
             // return new Response([condición que tuvo que fallar], Status.BAD_REQUEST)
-            UserStorage storage = UserStorage.getInstance();
-            if (!storage.addUser(new User(idInt, firstname, lastname, ageInt))) {
+            IdStorage<User> storage = Global.UserStorage;
+            if (!storage.add(new User(idInt, firstname, lastname, ageInt))) {
                 return new Response("A user with that id already exists", Status.BAD_REQUEST);
             }
             return new Response("user created successfully", Status.CREATED);
@@ -67,8 +68,8 @@ public class UserController {
             }catch(NumberFormatException e){
                  return new Response("Id must be numeric", Status.BAD_REQUEST);
             }
-            UserStorage storage = UserStorage.getInstance();
-            User user = storage.getUser(idInt);
+            IdStorage<User> storage = Global.UserStorage;
+            User user = storage.get(idInt);
             if(user == null){
                 return new Response("User not found", Status.NOT_FOUND);
             }
@@ -80,8 +81,8 @@ public class UserController {
     }
     public static Response getUsers() { // para la tabla
         try {
-            UserStorage storage = UserStorage.getInstance();
-            ArrayList<User> users = storage.getUsers();
+            IdStorage<User> storage = Global.UserStorage;
+            ArrayList<User> users = storage.getList();
             users.sort((obj1, obj2) -> (obj1.getId() - obj2.getId()));
             return new Response("User list found", Status.OK, users);
         } catch (Exception e) {

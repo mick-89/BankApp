@@ -8,7 +8,7 @@ package core.models;
  *
  * @author edangulo
  */
-public class Account {
+public class Account implements IdStorable {
     
     private String id;
     private Owner owner; // creo que también principio D?
@@ -30,10 +30,14 @@ public class Account {
         this.owner.addAccount(this);
     }
     
+    @Override
     public String getId() {
         return id;
     }
-
+    @Override
+    public boolean hasMatchingId(Object id) {
+        return this.id.equals(id);
+    }
     public Owner getOwner() {
         return owner;
     }

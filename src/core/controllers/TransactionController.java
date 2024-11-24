@@ -10,9 +10,11 @@ import core.models.Account;
 import core.models.EventHandler;
 import core.models.Transaction;
 import core.models.TransactionType;
-import core.models.storage.TransactionStorage;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import main.Global;
+import static main.Global.TransactionStorage;
 
 public class TransactionController {
 
@@ -31,9 +33,9 @@ public class TransactionController {
             if (destinationAccount != null) {
                 EventHandler e = new EventHandler(destinationAccount);
                 e.deposit(amountDouble);
-                TransactionStorage storage = TransactionStorage.getInstance();
+                ArrayList<Transaction> storage = Global.TransactionStorage;
                 // sí sé que esto habrá que SOLID ificarlo luego
-                if (storage.addTransaction(new Transaction(TransactionType.DEPOSIT, null, destinationAccount, amountDouble))) {
+                if (storage.add(new Transaction(TransactionType.DEPOSIT, null, destinationAccount, amountDouble))) {
                     return new Response("amount deposited", Status.CREATED);
                 } else{
                     return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);                    
@@ -63,9 +65,9 @@ public class TransactionController {
                 if (!e.withdraw(amountDouble)) {
                     return new Response("insufficient money", Status.BAD_REQUEST);
                 }
-                TransactionStorage storage = TransactionStorage.getInstance();
+                ArrayList<Transaction> storage = Global.TransactionStorage;
                 // sí sé que esto habrá que SOLID ificarlo luego
-                if (storage.addTransaction(new Transaction(TransactionType.WITHDRAW, sourceAccount, null, amountDouble))) {
+                if (storage.add(new Transaction(TransactionType.WITHDRAW, sourceAccount, null, amountDouble))) {
                     return new Response("amount withdrawed", Status.CREATED);
                 } else{
                     return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);                    
@@ -104,10 +106,10 @@ public class TransactionController {
             }
             EventHandler e2 = new EventHandler(targetAccount);
             e2.deposit(amountDouble);
-            TransactionStorage storage = TransactionStorage.getInstance();
+            ArrayList<Transaction> storage = Global.TransactionStorage;
             
             // sí sé que esto habrá que SOLID ificarlo luego
-            if (storage.addTransaction(new Transaction(TransactionType.TRANSFER, sourceAccount, targetAccount, amountDouble))) {
+            if (storage.add(new Transaction(TransactionType.TRANSFER, sourceAccount, targetAccount, amountDouble))) {
                 return new Response("amount transfered", Status.CREATED);
             } else{
                 return new Response("Unexpected error", Status.INTERNAL_SERVER_ERROR);                    
@@ -119,8 +121,7 @@ public class TransactionController {
 
     public static Response getTransactions() {
         try {
-            TransactionStorage storage = TransactionStorage.getInstance();
-            ArrayList<Transaction> transactions = storage.getTransactions();
+            ArrayList<Transaction> transactions = Global.TransactionStorage;
             ArrayList<Transaction> transactionsCopy = (ArrayList<Transaction>)transactions.clone();
             Collections.reverse(transactionsCopy);
             return new Response("Transaction list found", Status.OK, transactionsCopy);

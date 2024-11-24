@@ -8,9 +8,12 @@ import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.models.Account;
 import core.models.User;
-import core.models.storage.AccountStorage;
+import core.models.storage.IdStorage;
+
 import java.util.ArrayList;
 import java.util.Random;
+import main.Global;
+import static main.Global.AccountStorage;
 
 public class AccountController {
 
@@ -44,10 +47,10 @@ public class AccountController {
                 int third = random.nextInt(100);
                 
                 String accountId = String.format("%03d", first) + "-" + String.format("%06d", second) + "-" + String.format("%02d", third);
-                AccountStorage storage = AccountStorage.getInstance();
+                IdStorage<Account> storage = Global.AccountStorage;
                 Account a = new Account(accountId, selectedUser, initialBalanceInt);
  
-                storage.addAccount(a);
+                storage.add(a);
                 return new Response("account created successfully", Status.CREATED);
             }
             return new Response ("User not found", Status.BAD_REQUEST);
@@ -59,8 +62,8 @@ public class AccountController {
 
     public static Response getAccount(String id) {
         try{
-            AccountStorage storage = AccountStorage.getInstance();
-            Account account = storage.getAccount(id);
+            IdStorage<Account> storage = Global.AccountStorage;
+            Account account = storage.get(id);
             if(account == null){
                 return new Response("Account not found", Status.NOT_FOUND);
             }
@@ -74,8 +77,8 @@ public class AccountController {
 
     public static Response getAccounts() {
         try {
-            AccountStorage storage = AccountStorage.getInstance();
-            ArrayList<Account> accounts = storage.getAccounts();
+            IdStorage<Account> storage = Global.AccountStorage;
+            ArrayList<Account> accounts = storage.getList();
             accounts.sort((obj1, obj2) -> (obj1.getId().compareTo(obj2.getId())));            
             return new Response("Account list found", Status.OK, accounts);
         } catch (Exception e) {

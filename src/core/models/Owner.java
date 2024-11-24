@@ -4,9 +4,8 @@
  */
 package core.models;
 
-public interface Owner {
+public interface Owner extends IdStorable {
     
     void addAccount(Account account);
     
-    int getId();
 }
